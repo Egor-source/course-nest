@@ -5,23 +5,30 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt'
+import {RolesService} from "../roles/roles.service";
+
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
-        private repository: Repository<User>
+        private repository: Repository<User>,
+        private roleService: RolesService
     ) {
     }
 
     async create(data: CreateUserDto) {
+        const role = await this.roleService.findByName('user');
         const newUser = await this.repository.save({
             login: data.login,
             password: await bcrypt.hash(data.password, 1),
+            roles:[role],
         })
+
         return {
             id: newUser.id,
-            login: newUser.login
+            login: newUser.login,
+            roles:newUser.roles,
         };
     }
 
@@ -30,6 +37,7 @@ export class UsersService {
         return users.map((user) => ({
             id: user.id,
             login: user.login,
+            roles: user.roles,
         }));
     }
 
@@ -47,6 +55,7 @@ export class UsersService {
         return {
             id: updatedUser.id,
             login: updatedUser.login,
+            roles: updatedUser.roles,
         };
     }
 

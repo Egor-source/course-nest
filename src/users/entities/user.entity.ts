@@ -1,5 +1,6 @@
-import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Post} from "../../posts/entities/post.entity";
+import {Role} from "../../roles/entities/role.entity";
 
 @Entity()
 export class User {
@@ -14,5 +15,11 @@ export class User {
 
     @OneToMany(() => Post, (post) => post.user)
     posts: Promise<Post[]>;
+
+    @ManyToMany(()=> Role, (role)=>role.id,{
+        eager: true
+    })
+    @JoinTable()
+    roles:Role[]
 }
 
