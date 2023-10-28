@@ -13,7 +13,10 @@ export class User {
     @Column()
     password: string;
 
-    @OneToMany(() => Post, (post) => post.user)
+    @OneToMany(() => Post, (post) => post.user,{
+        onUpdate:'CASCADE',
+        onDelete:'CASCADE',
+    })
     posts: Promise<Post[]>;
 
     @ManyToMany(()=> Role, (role)=>role.id,{

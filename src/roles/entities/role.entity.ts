@@ -10,7 +10,4 @@ export class Role {
         nullable:false,
     })
     name: string
-    @ManyToMany(()=> User, (user)=>user.id)
-    @JoinTable()
-    users: User[]
 }

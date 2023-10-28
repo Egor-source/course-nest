@@ -6,6 +6,7 @@ import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt'
 import {RolesService} from "../roles/roles.service";
+import {UpdateUserRoleDto} from "./dto/update-user-role.dto";
 
 
 @Injectable()
@@ -22,13 +23,13 @@ export class UsersService {
         const newUser = await this.repository.save({
             login: data.login,
             password: await bcrypt.hash(data.password, 1),
-            roles:[role],
+            roles: [role],
         })
 
         return {
             id: newUser.id,
             login: newUser.login,
-            roles:newUser.roles,
+            roles: newUser.roles,
         };
     }
 
@@ -41,7 +42,7 @@ export class UsersService {
         }));
     }
 
-    async findOne(login: string){
+    async findOne(login: string) {
         const user = await this.repository.findOneBy({login});
         return user
     }
@@ -50,13 +51,31 @@ export class UsersService {
         if (data.password) {
             data.password = await bcrypt.hash(data.password, 1)
         }
+
+        if (data.roles) {
+            delete data.roles;
+        }
+
         const updatedUser = await this.repository.save({...data, id})
 
         return {
             id: updatedUser.id,
             login: updatedUser.login,
-            roles: updatedUser.roles,
+            roles: updatedUser.roles
         };
+    }
+
+    async updateUserRoles(id: number, roles: UpdateUserRoleDto[]) {
+        const promises = roles.map(async (role)=> await this.roleService.findByName(role.name))
+        const rolesFromDB = await Promise.all(promises);
+
+        const user = await this.repository.save({roles:rolesFromDB, id})
+
+        return {
+            id: user.id,
+            login: user.login,
+            roles: user.roles
+        }
     }
 
     async remove(id: number) {
