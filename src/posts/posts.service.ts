@@ -42,4 +42,12 @@ export class PostsService {
     async remove(id: number) {
         return await this.repository.delete(id);
     }
+
+    async userPosts(userId: number) {
+        const posts = await this.repository.findBy({userId})
+        return posts.map((post) => {
+            delete post.user.password
+            return post
+        })
+    }
 }

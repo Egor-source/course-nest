@@ -18,7 +18,7 @@ export class UsersService {
     ) {
     }
 
-    async create(data: CreateUserDto) {
+    async create(data: CreateUserDto){
         const role = await this.roleService.findByName('user');
         const newUser = await this.repository.save({
             login: data.login,
@@ -66,10 +66,10 @@ export class UsersService {
     }
 
     async updateUserRoles(id: number, roles: UpdateUserRoleDto[]) {
-        const promises = roles.map(async (role)=> await this.roleService.findByName(role.name))
+        const promises = roles.map(async (role) => await this.roleService.findByName(role.name))
         const rolesFromDB = await Promise.all(promises);
 
-        const user = await this.repository.save({roles:rolesFromDB, id})
+        const user = await this.repository.save({roles: rolesFromDB, id})
 
         return {
             id: user.id,
@@ -80,14 +80,5 @@ export class UsersService {
 
     async remove(id: number) {
         return await this.repository.delete(id);
-    }
-
-    async userPosts(userId: number) {
-        const user = await this.repository.findOneBy({id: userId})
-        const posts = await user.posts
-        return posts.map((post) => {
-            delete post.user
-            return post
-        })
     }
 }
