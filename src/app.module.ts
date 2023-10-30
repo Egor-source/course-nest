@@ -9,6 +9,8 @@ import {User} from "./users/entities/user.entity";
 import {Post} from "./posts/entities/post.entity";
 import {Role} from "./roles/entities/role.entity";
 import {RolesModule} from "./roles/roles.module";
+import {ServeStaticModule} from "@nestjs/serve-static"
+import {join} from 'path'
 
 @Module({
     imports: [
@@ -22,6 +24,10 @@ import {RolesModule} from "./roles/roles.module";
             database: process.env.DB_NAME,
             entities: [User, Post, Role],
             synchronize: true,
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'client/dist'),
+            exclude: ['/api/(.*)'],
         }),
         UsersModule,
         PostsModule,
