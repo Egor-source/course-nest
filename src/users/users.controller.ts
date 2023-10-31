@@ -18,10 +18,8 @@ import {UpdateUserDto} from './dto/update-user.dto';
 import {AuthService} from "../auth/auth.service";
 import {JwtService} from "@nestjs/jwt";
 import {TokenDto} from "./dto/token.dto";
-// import {Post as userPosts} from '../posts/entities/post.entity'
 import {ValidationPipe} from "../pipes/ValidationPipe";
-import {RolesGuard} from "../guards/RolesGuard";
-import {UpdateUserRoleDto} from "./dto/update-user-role.dto";
+import {UserGuard} from "../guards/UserGuard";
 import {ApiBearerAuth, ApiBody,  ApiResponse, ApiTags} from "@nestjs/swagger";
 import {ResponseUser} from "./types/ResponseUser";
 import {ResponseTokens} from "./types/ResponseTokens";
@@ -47,22 +45,11 @@ export class UsersController {
     @Post()
     async create(@Body() data: CreateUserDto): Promise<ResponseUser> {
         const newUser = await this.usersService.create(data);
-        return newUser
-    }
-
-    @ApiResponse({
-        status: 200,
-        description: 'Список всех пользователей',
-        type: [ResponseUser],
-    })
-    @ApiBearerAuth()
-    @UseGuards(new RolesGuard({
-        roles: ['admin']
-    }))
-    @UseGuards(AuthGuard('jwt'))
-    @Get()
-    async findAll(@Request() req) : Promise<ResponseUser[]>{
-        return await this.usersService.findAll();
+        return {
+            id:newUser.id,
+            login:newUser.login,
+            roles: newUser.roles
+        }
     }
 
     @ApiResponse({
@@ -101,30 +88,19 @@ export class UsersController {
     })
     @ApiBearerAuth()
     @ApiBody({type: UpdateUserDto})
-    @UseGuards(new RolesGuard({
-        roles: ['admin'],
-        userId: 'id',
-    }))
+    @UseGuards(new UserGuard('id'))
     @UseGuards(AuthGuard('jwt'))
     @Patch(':id')
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<ResponseUser> {
-        return await this.usersService.update(+id, data);
-    }
-
-    @ApiResponse({
-        status: 200,
-        description: 'Обновление ролей пользователя',
-        type: ResponseUser,
-    })
-    @ApiBearerAuth()
-    @ApiBody({type: [UpdateUserRoleDto]})
-    @UseGuards(new RolesGuard({
-        roles: ['admin'],
-    }))
-    @UseGuards(AuthGuard('jwt'))
-    @Patch('rolesUpdate/:id')
-    async updateUserRoles(@Param('id') id: string, @Body() roles: UpdateUserRoleDto[]): Promise<ResponseUser> {
-        return await this.usersService.updateUserRoles(+id, roles);
+        if (data.roles) {
+            delete data.roles;
+        }
+        const user = await this.usersService.update(+id, data);
+        return {
+            id:user.id,
+            login:user.login,
+            roles: user.roles
+        }
     }
 
     @ApiResponse({
@@ -133,10 +109,7 @@ export class UsersController {
         type: DeleteResult,
     })
     @ApiBearerAuth()
-    @UseGuards(new RolesGuard({
-        roles: ['admin'],
-        userId: 'id',
-    }))
+    @UseGuards(new UserGuard('id'))
     @UseGuards(AuthGuard('jwt'))
     @Delete(':id')
     remove(@Param('id') id: string) {

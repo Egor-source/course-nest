@@ -6,7 +6,7 @@ import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt'
 import {RolesService} from "../roles/roles.service";
-import {UpdateUserRoleDto} from "./dto/update-user-role.dto";
+import {PaginateInfoDto} from "../dto/PaginateInfoDto";
 
 
 @Injectable()
@@ -18,7 +18,7 @@ export class UsersService {
     ) {
     }
 
-    async create(data: CreateUserDto){
+    async create(data: CreateUserDto) {
         const role = await this.roleService.findByName('user');
         const newUser = await this.repository.save({
             login: data.login,
@@ -26,20 +26,19 @@ export class UsersService {
             roles: [role],
         })
 
-        return {
-            id: newUser.id,
-            login: newUser.login,
-            roles: newUser.roles,
-        };
+        return newUser;
     }
 
-    async findAll() {
-        const users = await this.repository.find();
-        return users.map((user) => ({
-            id: user.id,
-            login: user.login,
-            roles: user.roles,
-        }));
+    async paginate(paginate: PaginateInfoDto) {
+        const [data, total] = await this.repository.findAndCount({
+            take: paginate.count,
+            skip: paginate.perPage * paginate.count,
+        })
+        return {
+            data,
+            total,
+            currentPage: paginate.perPage,
+        };
     }
 
     async findOne(login: string) {
@@ -53,29 +52,14 @@ export class UsersService {
         }
 
         if (data.roles) {
-            delete data.roles;
+            const promises = data.roles.map(async (role) => await this.roleService.findByName(role.name))
+            const rolesFromDB = await Promise.all(promises);
+            data.roles = rolesFromDB
         }
 
         const updatedUser = await this.repository.save({...data, id})
 
-        return {
-            id: updatedUser.id,
-            login: updatedUser.login,
-            roles: updatedUser.roles
-        };
-    }
-
-    async updateUserRoles(id: number, roles: UpdateUserRoleDto[]) {
-        const promises = roles.map(async (role) => await this.roleService.findByName(role.name))
-        const rolesFromDB = await Promise.all(promises);
-
-        const user = await this.repository.save({roles: rolesFromDB, id})
-
-        return {
-            id: user.id,
-            login: user.login,
-            roles: user.roles
-        }
+        return updatedUser;
     }
 
     async remove(id: number) {
