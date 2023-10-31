@@ -11,6 +11,7 @@ import {Role} from "./roles/entities/role.entity";
 import {RolesModule} from "./roles/roles.module";
 import {ServeStaticModule} from "@nestjs/serve-static"
 import {join} from 'path'
+import { AdminModule } from './admin/admin.module';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import {join} from 'path'
         UsersModule,
         PostsModule,
         RolesModule,
+        AdminModule.register(),
     ],
     controllers: [AppController],
     providers: [AppService],

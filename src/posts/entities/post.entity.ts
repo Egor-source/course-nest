@@ -23,6 +23,6 @@ export class Post {
     @ApiProperty({
         type:()=>User
     })
-    @ManyToOne(() => User, (user) => user.posts, {eager: true})
-    user: User;
+    @ManyToOne(() => User, (user) => user.posts)
+    user?: User;
 }

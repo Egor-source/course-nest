@@ -1,7 +1,7 @@
 import {Controller, Get, Post, Body, Param, Delete, ParseIntPipe, UseGuards} from '@nestjs/common';
 import {PostsService} from './posts.service';
 import {CreatePostDto} from './dto/create-post.dto';
-import {RolesGuard} from "../guards/RolesGuard";
+import {UserGuard} from "../guards/UserGuard";
 import {AuthGuard} from "@nestjs/passport";
 import {Post as userPost} from "./entities/post.entity"
 import {ApiBearerAuth, ApiBody, ApiTags, ApiResponse} from "@nestjs/swagger";
@@ -20,24 +20,11 @@ export class PostsController {
     })
     @ApiBearerAuth()
     @ApiBody({type: CreatePostDto})
-    @UseGuards(new RolesGuard({
-        roles: ['admin'],
-        userId: ['userId']
-    }))
+    @UseGuards(new UserGuard(['userId']))
     @UseGuards(AuthGuard('jwt'))
     @Post()
     create(@Body() createPostDto: CreatePostDto): Promise<userPost> {
         return this.postsService.create(createPostDto);
-    }
-
-    @ApiResponse({
-        status: 200,
-        description: 'Все посты',
-        type: [userPost],
-    })
-    @Get()
-    findAll(): Promise<userPost[]> {
-        return this.postsService.findAll();
     }
 
     @ApiResponse({
