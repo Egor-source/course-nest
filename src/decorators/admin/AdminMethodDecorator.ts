@@ -1,11 +1,13 @@
-import {applyDecorators, Get, SetMetadata} from '@nestjs/common';
+import {applyDecorators, SetMetadata} from '@nestjs/common';
+import {IAdminMethodDecorator} from "../../admin/interfaces/IAdminMethodDecorator";
 
 
-export function AdminMethodDecorator(requestType: MethodDecorator, methodType: string, path?: string) {
+export function AdminMethodDecorator(data: IAdminMethodDecorator) {
     return applyDecorators(
-        requestType,
-        SetMetadata('path', path),
-        SetMetadata('methodType', methodType)
+        data.requestType,
+        SetMetadata('path', data.path),
+        SetMetadata('methodType', data.methodType),
+        SetMetadata('options', data.options)
     );
 }
 

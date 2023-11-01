@@ -29,8 +29,8 @@ export class UsersService extends DefaultService<User>{
         return newUser;
     }
 
-    async findOne(login: string) {
-        const user = await this.repository.findOneBy({login});
+    async findOneBy(where: object) {
+        const user = await this.repository.findOneBy(where);
         return user
     }
 

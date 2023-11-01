@@ -2,7 +2,7 @@ import {Body, Param} from '@nestjs/common';
 import {PostsService} from './posts.service';
 import {CreatePostDto} from './dto/create-post.dto';
 import {Post as userPost} from "./entities/post.entity"
-import {ApiBody, ApiResponse} from "@nestjs/swagger";
+import {ApiBody, ApiProperty, ApiResponse} from "@nestjs/swagger";
 import {DeleteResult} from "typeorm";
 import {AdminController} from "../decorators/admin/AdminController";
 import {PaginateResultDto} from "../dto/PaginateResultDto";
@@ -11,7 +11,18 @@ import {AdminCreate} from "../decorators/admin/AdminCreate";
 import {AdminPaginate} from "../decorators/admin/AdminPaginate";
 import {AdminDelete} from "../decorators/admin/AdminDelete";
 
-@AdminController('adminPosts', 'Посты', 'AdminPosts')
+@AdminController({
+    prefix: 'adminPosts',
+    controllerLabel: 'Посты',
+    options: {
+        relationFields: [{
+            fieldName: 'userId',
+            multiple: false,
+            paginateFrom: 'users',
+            paginateDisplayValueFrom: 'login',
+        }],
+    }
+}, 'AdminPosts')
 export class PostsAdminController {
     constructor(private readonly postsService: PostsService) {
     }
@@ -22,7 +33,21 @@ export class PostsAdminController {
         type: userPost,
     })
     @ApiBody({type: CreatePostDto})
-    @AdminCreate()
+    @AdminCreate({
+        options: {
+            body: {
+                userId: {
+                    require: true,
+                },
+                title: {
+                    require: true,
+                },
+                text: {
+                    require: true,
+                }
+            }
+        }
+    })
     create(@Body() createPostDto: CreatePostDto): Promise<userPost> {
         return this.postsService.create(createPostDto);
     }
@@ -32,7 +57,9 @@ export class PostsAdminController {
         description: 'Список всех постов',
         type: PaginateResultDto<userPost>
     })
-    @AdminPaginate('/paginate')
+    @AdminPaginate({
+        path: '/paginate',
+    })
     async paginate(@Body() paginate: PaginateInfoDto): Promise<PaginateResultDto<userPost>> {
         return this.postsService.paginate(paginate);
     }
@@ -42,7 +69,14 @@ export class PostsAdminController {
         description: 'Удаление поста',
         type: DeleteResult,
     })
-    @AdminDelete(':id')
+    @AdminDelete({
+        path: ':id',
+        options: {
+            params: {
+                ':id': 'id',
+            }
+        }
+    })
     remove(@Param('id') id: string) {
         return this.postsService.remove(+id);
     }

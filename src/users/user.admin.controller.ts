@@ -24,7 +24,19 @@ import {AdminLogin} from "../decorators/admin/AdminLogin";
 import {AdminUpdate} from "../decorators/admin/AdminUpdate";
 import {AdminDelete} from "../decorators/admin/AdminDelete";
 
-@AdminController('adminUsers', 'Пользователи', 'UsersAdmin')
+@AdminController({
+    prefix: 'adminUsers',
+    controllerLabel: 'Пользователи',
+    options: {
+        relationFields: [{
+            fieldName: 'roles',
+            multiple: true,
+            displayValueFrom: 'name',
+            paginateFrom: 'roles',
+            paginateDisplayValueFrom: 'name',
+        }],
+    }
+}, 'UsersAdmin')
 export class UsersAdminController {
     constructor(
         private readonly usersService: UsersService,
@@ -39,7 +51,18 @@ export class UsersAdminController {
     })
     @ApiBody({type: CreateUserDto})
     @UsePipes(new ValidationPipe(CreateUserSchema))
-    @AdminCreate()
+    @AdminCreate({
+        options: {
+            body: {
+                login: {
+                    require: true,
+                },
+                password: {
+                    require: true,
+                }
+            }
+        }
+    })
     async create(@Body() data: CreateUserDto): Promise<ResponseUserFull> {
         const newUser = await this.usersService.create(data);
         return newUser
@@ -50,7 +73,9 @@ export class UsersAdminController {
         description: 'Список всех пользователей',
         type: PaginateResultDto<ResponseUserFull>
     })
-    @AdminPaginate('/paginate')
+    @AdminPaginate({
+        path: '/paginate'
+    })
     async paginate(@Body() paginate: PaginateInfoDto): Promise<PaginateResultDto<ResponseUserFull>> {
         return this.usersService.paginate(paginate);
     }
@@ -60,10 +85,23 @@ export class UsersAdminController {
         description: 'Авторизация пользователя',
         type: ResponseTokens,
     })
-    @UseGuards(AuthGuard('local'))
-    @AdminLogin('/login')
-    login(@Request() req): Promise<ResponseTokens> {
-        return this.authService.login(req.user)
+    @AdminLogin({
+        path: '/login',
+        options: {
+            body: {
+                userId: {
+                    require: true,
+                    field: 'id',
+                }
+            }
+        }
+    })
+    async login(@Body() {userId}): Promise<ResponseTokens> {
+        const user = await this.usersService.findOneBy({id: userId})
+        return this.authService.login({
+            id: userId,
+            roles: user.roles,
+        } as UpdateUserDto)
     }
 
     @ApiResponse({
@@ -72,7 +110,28 @@ export class UsersAdminController {
         type: ResponseUserFull,
     })
     @ApiBody({type: UpdateUserDto})
-    @AdminUpdate(':id')
+    @AdminUpdate({
+        path: ':id',
+        options: {
+            params: {
+                ':id': 'id',
+            },
+            body: {
+                login: {
+                    require: false,
+                    field: 'login',
+                },
+                password: {
+                    require: false,
+                    field: 'password'
+                },
+                roles: {
+                    require: false,
+                    field: 'roles'
+                }
+            },
+        }
+    })
     async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<ResponseUserFull> {
         return await this.usersService.update(+id, data);
     }
@@ -82,7 +141,14 @@ export class UsersAdminController {
         description: 'Удаление пользователя',
         type: DeleteResult,
     })
-    @AdminDelete(':id')
+    @AdminDelete({
+        path: ':id',
+        options: {
+            params: {
+                ':id': 'id',
+            }
+        }
+    })
     remove(@Param('id') id: string) {
         return this.usersService.remove(+id);
     }

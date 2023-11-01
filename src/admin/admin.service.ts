@@ -21,12 +21,14 @@ export class AdminService {
             const controllerRef = this.moduleRef.get(controller, {strict: false});
             const prefix = this.reflector.get('controllerPrefix', controller);
             const label = this.reflector.get('controllerLabel', controller);
+            const options = this.reflector.get('options', controller);
             return {
+                name: prefix.replace('admin', '').toLowerCase(),
                 label,
-                name: prefix.replace('admin','').toLowerCase(),
                 methods: {
                     ...this.getMethods(controllerRef, prefix)
-                }
+                },
+                options,
             }
         }))
     }
@@ -51,14 +53,18 @@ export class AdminService {
         return adminControllerFiles;
     }
 
-    private getMethods(controllerRef:Type, prefix:string) {
+    private getMethods(controllerRef: Type, prefix: string) {
         return Object.getOwnPropertyNames(Object.getPrototypeOf(controllerRef))
             .reduce((acc, name) => {
                 if (name !== 'constructor') {
                     const methodType = this.reflector.get('methodType', controllerRef[name])
                     const path = this.reflector.get('path', controllerRef[name])?.replace('/', '')
+                    const options = this.reflector.get('options', controllerRef[name])
                     if (methodType) {
-                        acc[methodType] = `${process.env.GLOBAL_PREFIX}/${prefix}/${path ?? ''}`
+                        acc[methodType] = {
+                            path: `${process.env.GLOBAL_PREFIX}/${prefix}/${path ?? ''}`,
+                            options,
+                        }
                     }
                 }
                 return acc

@@ -1,7 +1,9 @@
+import {IMethod} from "./IMethod";
+
 export interface IMethods {
-    create: string | null,
-    update: string | null,
-    delete: string | null,
-    paginate: string | null,
-    login: string | null,
+    create: IMethod | null,
+    update: IMethod | null,
+    delete: IMethod | null,
+    paginate: IMethod | null,
+    login: IMethod | null,
 }
