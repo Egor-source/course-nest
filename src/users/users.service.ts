@@ -6,16 +6,16 @@ import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt'
 import {RolesService} from "../roles/roles.service";
-import {PaginateInfoDto} from "../dto/PaginateInfoDto";
-
+import {DefaultService} from "../global/DefaultService";
 
 @Injectable()
-export class UsersService {
+export class UsersService extends DefaultService<User>{
     constructor(
         @InjectRepository(User)
-        private repository: Repository<User>,
+        protected repository: Repository<User>,
         private roleService: RolesService
     ) {
+        super(repository);
     }
 
     async create(data: CreateUserDto) {
@@ -27,18 +27,6 @@ export class UsersService {
         })
 
         return newUser;
-    }
-
-    async paginate(paginate: PaginateInfoDto) {
-        const [data, total] = await this.repository.findAndCount({
-            take: paginate.count,
-            skip: paginate.perPage * paginate.count,
-        })
-        return {
-            data,
-            total,
-            currentPage: paginate.perPage,
-        };
     }
 
     async findOne(login: string) {

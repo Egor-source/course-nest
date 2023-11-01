@@ -3,14 +3,15 @@ import {CreateRoleDto} from './dto/create-role.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Role} from "./entities/role.entity";
 import {Repository} from "typeorm";
-import {PaginateInfoDto} from "../dto/PaginateInfoDto";
+import {DefaultService} from "../global/DefaultService";
 
 @Injectable()
-export class RolesService {
+export class RolesService extends DefaultService<Role> {
     constructor(
         @InjectRepository(Role)
-        private repository: Repository<Role>
+        protected repository: Repository<Role>
     ) {
+        super(repository)
     }
 
     async create(createRoleDto: CreateRoleDto) {
@@ -25,19 +26,7 @@ export class RolesService {
         return role;
     }
 
-    async paginate(paginate: PaginateInfoDto) {
-        const [data, total] = await this.repository.findAndCount({
-            take: paginate.count,
-            skip: paginate.perPage * paginate.count,
-        })
-        return {
-            data,
-            total,
-            currentPage: paginate.perPage,
-        };
-    }
-
-   async remove(id: number) {
+    async remove(id: number) {
         return await this.repository.delete(id);
     }
 }

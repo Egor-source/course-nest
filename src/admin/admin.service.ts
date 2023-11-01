@@ -2,7 +2,7 @@ import {Injectable, Inject, Type} from '@nestjs/common';
 import * as fs from 'fs'
 import * as path from "path";
 import {Reflector, ModuleRef} from "@nestjs/core";
-import {IMethod} from "./interfaces/IMethod";
+import {IMethods} from "./interfaces/IMethods";
 
 @Injectable()
 export class AdminService {
@@ -68,6 +68,6 @@ export class AdminService {
                 delete: null,
                 paginate: null,
                 login: null,
-            } as IMethod)
+            } as IMethods)
     }
 }

@@ -4,16 +4,17 @@ import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
 import {Post} from "./entities/post.entity";
 import {User} from "../users/entities/user.entity";
-import {PaginateInfoDto} from "../dto/PaginateInfoDto";
+import {DefaultService} from "../global/DefaultService";
 
 @Injectable()
-export class PostsService {
+export class PostsService extends DefaultService<Post>{
     constructor(
         @InjectRepository(Post)
-        private repository: Repository<Post>,
+        protected repository: Repository<Post>,
         @InjectRepository(User)
         private userRepository: Repository<User>
     ) {
+        super(repository)
     }
 
     async create(postData: CreatePostDto) {
@@ -24,18 +25,6 @@ export class PostsService {
         });
         delete newPost.user.password;
         return newPost
-    }
-
-    async paginate(paginate: PaginateInfoDto) {
-        const [data, total] = await this.repository.findAndCount({
-            take: paginate.count,
-            skip: paginate.perPage * paginate.count,
-        })
-        return {
-            data,
-            total,
-            currentPage: paginate.perPage,
-        };
     }
 
     async findOne(id: number) {
