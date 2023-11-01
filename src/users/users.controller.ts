@@ -20,10 +20,11 @@ import {JwtService} from "@nestjs/jwt";
 import {TokenDto} from "./dto/token.dto";
 import {ValidationPipe} from "../pipes/ValidationPipe";
 import {UserGuard} from "../guards/UserGuard";
-import {ApiBearerAuth, ApiBody,  ApiResponse, ApiTags} from "@nestjs/swagger";
+import {ApiBearerAuth, ApiBody, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {ResponseUser} from "./types/ResponseUser";
 import {ResponseTokens} from "./types/ResponseTokens";
 import {DeleteResult} from "typeorm";
+import {LoginDto} from "./dto/login.dto";
 
 @ApiTags('Users')
 @Controller('users')
@@ -46,8 +47,8 @@ export class UsersController {
     async create(@Body() data: CreateUserDto): Promise<ResponseUser> {
         const newUser = await this.usersService.create(data);
         return {
-            id:newUser.id,
-            login:newUser.login,
+            id: newUser.id,
+            login: newUser.login,
             roles: newUser.roles
         }
     }
@@ -59,8 +60,19 @@ export class UsersController {
     })
     @UseGuards(AuthGuard('local'))
     @Post('/login')
-    login(@Request() req): Promise<ResponseTokens> {
+    login(@Request() req): LoginDto {
         return this.authService.login(req.user)
+    }
+
+    @ApiResponse({
+        status: 200,
+        description: 'Возвращает авторизованого пользователя ',
+        type: ResponseUser,
+    })
+    @UseGuards(AuthGuard('jwt'))
+    @Get('/authUser')
+    authUser(@Request() req): Promise<ResponseUser> {
+        return req.user
     }
 
     @ApiResponse({
@@ -70,14 +82,15 @@ export class UsersController {
     })
     @ApiBody({type: TokenDto})
     @Post('/refreshTokens')
-    refreshTokens(@Body() data: TokenDto):Promise<ResponseTokens> | UnauthorizedException{
+    refreshTokens(@Body() data: TokenDto): LoginDto | UnauthorizedException {
         try {
-            const {id, login} = this.jwtService.verify(data.token, {
+            const user = this.jwtService.verify(data.token, {
                 secret: process.env.JWT_REFRESH_SECRET,
             })
-            return this.authService.login(new UpdateUserDto({id, login}))
+            user.roles = JSON.parse(user.roles)
+            return this.authService.login(user)
         } catch (e) {
-            return new UnauthorizedException()
+            throw new UnauthorizedException()
         }
     }
 
@@ -97,8 +110,8 @@ export class UsersController {
         }
         const user = await this.usersService.update(+id, data);
         return {
-            id:user.id,
-            login:user.login,
+            id: user.id,
+            login: user.login,
             roles: user.roles
         }
     }
