@@ -1,8 +1,8 @@
 <template>
   <div class="w-full h-full">
-    <div class="flex flex-no-wrap h-full">
+    <div class="grid grid-cols-12  grid-flow-col h-full w-full">
       <div
-        class="bg-gray-800 shadow h-full">
+        class="bg-gray-800 col-span-2 shadow h-full">
         <router-link
           v-for="controllerInfo in controllersInfo"
           :key="controllerInfo.name"
@@ -23,7 +23,8 @@
           {{ controllerInfo.label }}
         </router-link>
       </div>
-      <div v-if="controllersInfo.length> 0" class="container h-full py-6 w-full px-10"
+      <div v-if="controllersInfo.length> 0"
+           class="col-span-10 h-full py-6 w-full max-h-screen px-10"
            style="background-color: rgb(79, 91, 115)">
         <router-view/>
       </div>
@@ -32,7 +33,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapMutations} from "vuex";
 import {RouterLink} from 'vue-router'
 
 export default {
@@ -51,9 +52,18 @@ export default {
     if (!this.user.id) {
       await this.loadUser();
     }
-    await this.loadControllersInfo();
+    try {
+      await this.loadControllersInfo();
+    } catch (e) {
+      if (e.response.status === 403) {
+        this.resetAuth()
+      }
+    }
   },
   methods: {
+    ...mapMutations({
+      resetAuth: 'user/resetAuth',
+    }),
     ...mapActions({
       loadUser: 'user/loadUser',
       loadControllersInfo: 'controllersInfo/loadControllersInfo',

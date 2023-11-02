@@ -23,9 +23,7 @@ export default {
       return this.getControllerDataByName(this.controllerName)
     },
     cols() {
-      console.log(!this.controllerData.data.length > 0)
       if (!this.controllerData || !this.controllerData.data.length > 0) return []
-      console.log(this.controllerData)
       return Object.keys(this.controllerData.data[0])
     },
     rows() {
