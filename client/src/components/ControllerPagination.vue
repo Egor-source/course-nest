@@ -70,7 +70,6 @@ export default {
       paginate: 'controllersInfo/paginate'
     }),
     onPaginate(perPage) {
-      console.log(321)
       if (perPage === this.controllerData.currentPage || perPage < 0 || perPage + 1 > this.pageCount) return null
       this.paginate({
         controllerName: this.controllerName,

@@ -19,6 +19,14 @@
         Редактировать
       </button>
       <button
+        v-if="isMethodExist({controllerName, method:'login'})"
+        :disabled="!selectedRow"
+        class="disabled:opacity-25  flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        @click="onLogin"
+      >
+        Авторизоваться
+      </button>
+      <button
         v-if="isMethodExist({controllerName, method:'delete'})"
         :disabled="!selectedRow"
         class="disabled:opacity-25 flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
@@ -46,7 +54,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters, mapMutations} from "vuex";
 import ControllerPagination from "@/components/ControllerPagination";
 import ObjectModal from "@/components/ObjectModal";
 
@@ -116,10 +124,16 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setUser: 'user/setUser',
+      setAccessToken: 'user/setAccessToken',
+      setRefreshToken: 'user/setRefreshToken',
+    }),
     ...mapActions({
       create: 'controllersInfo/create',
       delete: 'controllersInfo/deleteObject',
       update: 'controllersInfo/update',
+      login: 'controllersInfo/login'
     }),
     showCreateModal() {
       this.isShowCreateModal = true;
@@ -139,6 +153,17 @@ export default {
         object: this.selectedRow,
         updateData
       })
+      this.$emit('clearSelectedRow')
+    },
+    async onLogin() {
+      const data = await this.login({
+        controllerName: this.controllerName,
+        object: this.selectedRow,
+      })
+      this.setUser(data);
+      this.setAccessToken(data.access_token)
+      this.setRefreshToken(data.refresh_token)
+
       this.$emit('clearSelectedRow')
     },
     async onDelete() {

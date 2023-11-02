@@ -46,6 +46,19 @@ export async function update({getters, commit}, {controllerName, object, updateD
   commit('updateObject', {controllerName, data})
 }
 
+export async function login({getters, commit}, {controllerName, object}) {
+  const controllerInfo = getters.getControllerInfoByName(controllerName);
+  const options = controllerInfo.methods.login.options;
+  const userData = Object.entries(options?.body).reduce((acc, [key, {field}]) => {
+    acc[key] = object.find((rowField) => rowField.key === field).value
+    return acc;
+  }, {})
+  const {data} = await axiosInstance.post(controllerInfo.methods.login.path, userData);
+  localStorage.setItem('accessToken', data.access_token)
+  localStorage.setItem('refreshToken', data.refresh_token)
+  return data
+}
+
 function replacePathParams(params, object, path) {
   return Object.entries(params).reduce((acc, [key, objectKey]) => {
     acc = acc.replace(key, object.find((field) => field.key === objectKey).value)

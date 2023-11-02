@@ -98,9 +98,10 @@ export class UsersAdminController {
         }
     })
     async login(@Body() {userId}): Promise<ResponseTokens> {
-        const user = await this.usersService.findOneBy({id: userId})
+        const user = await this.usersService.findOneBy({id: +userId})
         return this.authService.login({
             id: userId,
+            login: user.login,
             roles: user.roles,
         } as UpdateUserDto)
     }
