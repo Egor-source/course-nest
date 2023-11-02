@@ -7,7 +7,7 @@ export abstract class DefaultService<T> {
     ) {
     }
 
-   public async paginate(paginate: PaginateInfoDto) {
+    public async paginate(paginate: PaginateInfoDto) {
         const [data, total] = await this.repository.findAndCount({
             take: paginate.count,
             skip: paginate.perPage * paginate.count,
@@ -17,5 +17,10 @@ export abstract class DefaultService<T> {
             total,
             currentPage: paginate.perPage,
         };
+    }
+
+    async remove(id: number) {
+        await this.repository.delete(id);
+        return {id}
     }
 }

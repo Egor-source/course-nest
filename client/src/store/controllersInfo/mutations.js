@@ -17,6 +17,13 @@ export function addObjectToData(store, {controllerName, data}) {
   store.controllersData[controllerName].data.push(data)
 }
 
+export function deleteObjectFromData(store, {controllerName, data}) {
+  const [key, value] = Object.entries(data)[0]
+  store.controllersData[controllerName].data = store.controllersData[controllerName].data.filter((object) => {
+    return object[key] !== value
+  })
+}
+
 export function updateControllerData(store, {name, ...data}) {
   store.controllersData[name] = data
 }

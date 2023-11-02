@@ -25,8 +25,4 @@ export class RolesService extends DefaultService<Role> {
         })
         return role;
     }
-
-    async remove(id: number) {
-        return await this.repository.delete(id);
-    }
 }

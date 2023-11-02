@@ -23,3 +23,13 @@ export async function create({getters, commit}, {controllerName, createData}) {
   const {data} = await axiosInstance.post(controllerInfo.methods.create.path, createData);
   commit('addObjectToData', {controllerName, data})
 }
+
+export async function deleteObject({getters, commit}, {controllerName, object}) {
+  const controllerInfo = getters.getControllerInfoByName(controllerName);
+  const path = Object.entries(controllerInfo.methods.delete.options.params).reduce((acc, [key, objectKey]) => {
+    acc = acc.replace(key, object.find((field) => field.key === objectKey).value)
+    return acc
+  }, controllerInfo.methods.delete.path);
+  const {data} = await axiosInstance.delete(path);
+  commit('deleteObjectFromData', {controllerName, data})
+}

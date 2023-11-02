@@ -49,8 +49,4 @@ export class UsersService extends DefaultService<User>{
 
         return updatedUser;
     }
-
-    async remove(id: number) {
-        return await this.repository.delete(id);
-    }
 }

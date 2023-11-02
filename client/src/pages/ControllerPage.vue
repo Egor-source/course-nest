@@ -1,11 +1,15 @@
 <template>
   <div class="h-full flex flex-col relative overflow-x-auto shadow-md sm:rounded-lg dark:bg-gray-800">
     <ControllerTable
+      v-model="selectedRow"
       v-if="cols.length>0"
       :cols="cols"
       :rows="rows"
     />
-    <ControllerFooter/>
+    <ControllerFooter
+      :selected-row="selectedRow"
+      @object-deleted="selectedRow = null"
+    />
   </div>
 </template>
 <script>
@@ -16,6 +20,11 @@ import ControllerFooter from "@/components/ControllerFooter";
 export default {
   name: "ControllerPage",
   components: {ControllerFooter, ControllerTable},
+  data() {
+    return {
+      selectedRow: null,
+    }
+  },
   computed: {
     ...mapGetters({
       getControllerDataByName: 'controllersInfo/getControllerDataByName',

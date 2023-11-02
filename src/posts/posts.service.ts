@@ -7,7 +7,7 @@ import {User} from "../users/entities/user.entity";
 import {DefaultService} from "../global/DefaultService";
 
 @Injectable()
-export class PostsService extends DefaultService<Post>{
+export class PostsService extends DefaultService<Post> {
     constructor(
         @InjectRepository(Post)
         protected repository: Repository<Post>,
@@ -31,10 +31,6 @@ export class PostsService extends DefaultService<Post>{
         const post = await this.repository.findOneBy({id});
         delete post.user.password;
         return post;
-    }
-
-    async remove(id: number) {
-        return await this.repository.delete(id);
     }
 
     async userPosts(userId: number) {
