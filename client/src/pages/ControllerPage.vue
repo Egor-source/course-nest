@@ -1,17 +1,23 @@
 <template>
-  <ControllerTable
-    v-if="cols.length>0"
-    :cols="cols"
-    :rows="rows"
-  />
+  <div class="h-full flex flex-col relative overflow-x-auto shadow-md sm:rounded-lg dark:bg-gray-800">
+    <ControllerTable
+      v-if="cols.length>0"
+      :cols="cols"
+      :rows="rows"
+    />
+    <ControllerPagination
+      :controller-data="controllerData"
+    />
+  </div>
 </template>
 <script>
 import ControllerTable from "@/components/ControllerTable";
 import {mapActions, mapGetters} from "vuex";
+import ControllerPagination from "@/components/ControllerPagination";
 
 export default {
   name: "ControllerPage",
-  components: {ControllerTable},
+  components: {ControllerPagination, ControllerTable},
   computed: {
     ...mapGetters({
       getControllerDataByName: 'controllersInfo/getControllerDataByName'
@@ -49,10 +55,10 @@ export default {
       paginate: 'controllersInfo/paginate'
     }),
     pagination(scale = 0) {
-      const {perPage} = this.controllerData
+      const {currentPage} = this.controllerData
       this.paginate({
         controllerName: this.controllerName,
-        perPage: perPage + scale,
+        perPage: currentPage + scale,
       });
     }
   }

@@ -10,7 +10,7 @@ export async function paginate({getters, commit}, paginateInfo) {
   const controllerInfo = getters.getControllerInfoByName(paginateInfo.controllerName)
   const {data} = await axiosInstance.post(controllerInfo.methods.paginate.path, {
     perPage: paginateInfo.perPage,
-    count: 10,
+    count: +process.env.PAGINATE_COUNT,
   });
   commit('updateControllerData', {
     name: paginateInfo.controllerName,

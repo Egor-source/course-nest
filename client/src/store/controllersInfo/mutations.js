@@ -6,7 +6,7 @@ export function setControllersData(store, controllersInfo) {
   store.controllersData = controllersInfo.reduce((acc, controllerInfo) => {
     acc[controllerInfo.name] = {
       data: [],
-      perPage: 0,
+      currentPage: 0,
       total: 0,
     }
     return acc
