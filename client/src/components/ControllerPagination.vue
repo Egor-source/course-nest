@@ -1,7 +1,4 @@
 <template>
-  <div
-    class="py-3 px-4 border-solid flex justify-center border-t-2  border-gray-400"
-  >
     <ul class="flex items-center -space-x-px h-8 text-sm">
       <li>
         <button
@@ -47,7 +44,6 @@
         </button>
       </li>
     </ul>
-  </div>
 </template>
 
 <script>

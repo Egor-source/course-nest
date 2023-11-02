@@ -13,3 +13,17 @@ export function getControllerDataByName(store) {
     return store.controllersData[name]
   }
 }
+
+export function isMethodExist(store) {
+  return ({controllerName, method}) => {
+    const controller = getControllerInfoByName(store)(controllerName)
+    return !!controller.methods[method]
+  }
+}
+
+export function getMethodOptions(store) {
+  return ({controllerName, method}) => {
+    const controller = getControllerInfoByName(store)(controllerName)
+    return controller.methods[method]?.options
+  }
+}

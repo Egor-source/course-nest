@@ -23,7 +23,7 @@ export class PostsService extends DefaultService<Post>{
             ...postData,
             user,
         });
-        delete newPost.user.password;
+        delete newPost.user;
         return newPost
     }
 

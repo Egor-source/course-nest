@@ -26,9 +26,11 @@ export class RolesAdminController {
     })
     @ApiBody({type: CreateRoleDto})
     @AdminCreate({
+        path: '/create',
         options: {
             body: {
                 name: {
+                    label:'Название роли',
                     require: true,
                 }
             }

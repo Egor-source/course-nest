@@ -5,6 +5,7 @@ export interface IAdminMethodOptions {
     body?: {
         [key: string]: {
             require: boolean
+            label: string
             field?: string
         }
     }

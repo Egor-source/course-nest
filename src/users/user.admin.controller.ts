@@ -49,14 +49,17 @@ export class UsersAdminController {
     @ApiBody({type: CreateUserDto})
     @UsePipes(new ValidationPipe(CreateUserSchema))
     @AdminCreate({
+        path: '/create',
         options: {
             body: {
                 login: {
+                    label: 'Логин',
                     require: true,
                 },
                 password: {
+                    label: 'Пароль',
                     require: true,
-                }
+                },
             }
         }
     })
@@ -87,6 +90,7 @@ export class UsersAdminController {
         options: {
             body: {
                 userId: {
+                    label: '',
                     require: true,
                     field: 'id',
                 }
@@ -115,14 +119,17 @@ export class UsersAdminController {
             },
             body: {
                 login: {
+                    label: 'Логин',
                     require: false,
                     field: 'login',
                 },
                 password: {
+                    label: 'Пароль',
                     require: false,
                     field: 'password'
                 },
                 roles: {
+                    label: 'Роли',
                     require: false,
                     field: 'roles'
                 }

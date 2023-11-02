@@ -17,3 +17,9 @@ export async function paginate({getters, commit}, paginateInfo) {
     ...data,
   })
 }
+
+export async function create({getters, commit}, {controllerName, createData}) {
+  const controllerInfo = getters.getControllerInfoByName(controllerName)
+  const {data} = await axiosInstance.post(controllerInfo.methods.create.path, createData);
+  commit('addObjectToData', {controllerName, data})
+}

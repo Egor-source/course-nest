@@ -34,15 +34,19 @@ export class PostsAdminController {
     })
     @ApiBody({type: CreatePostDto})
     @AdminCreate({
+        path: '/create',
         options: {
             body: {
                 userId: {
+                    label: 'Создатель поста',
                     require: true,
                 },
                 title: {
+                    label: 'Заголовок',
                     require: true,
                 },
                 text: {
+                    label: 'Текст поста',
                     require: true,
                 }
             }

@@ -13,6 +13,10 @@ export function setControllersData(store, controllersInfo) {
   }, {})
 }
 
+export function addObjectToData(store, {controllerName, data}) {
+  store.controllersData[controllerName].data.push(data)
+}
+
 export function updateControllerData(store, {name, ...data}) {
   store.controllersData[name] = data
 }

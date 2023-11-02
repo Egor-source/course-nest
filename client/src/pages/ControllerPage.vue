@@ -5,23 +5,21 @@
       :cols="cols"
       :rows="rows"
     />
-    <ControllerPagination
-      :controller-data="controllerData"
-    />
+    <ControllerFooter/>
   </div>
 </template>
 <script>
 import ControllerTable from "@/components/ControllerTable";
 import {mapActions, mapGetters} from "vuex";
-import ControllerPagination from "@/components/ControllerPagination";
+import ControllerFooter from "@/components/ControllerFooter";
 
 export default {
   name: "ControllerPage",
-  components: {ControllerPagination, ControllerTable},
+  components: {ControllerFooter, ControllerTable},
   computed: {
     ...mapGetters({
       getControllerDataByName: 'controllersInfo/getControllerDataByName',
-      getControllerInfoByName: 'controllersInfo/getControllerInfoByName'
+      getControllerInfoByName: 'controllersInfo/getControllerInfoByName',
     }),
     controllerName() {
       return this.$route.params.controllerName
@@ -39,7 +37,7 @@ export default {
     rows() {
       if (!this.controllerData) return []
       return this.controllerData.data.map((object) => {
-        return Object.entries(object).map(([key, value]) => {
+        const row = Object.entries(object).map(([key, value]) => {
           const relationInfo = this.controllerInfo.options?.relationFields?.find(({fieldName}) => fieldName === key)
           const fieldData = {
             key,
@@ -51,6 +49,13 @@ export default {
           }
           return fieldData
         })
+        return row.reduce((acc, field) => {
+          const index = this.cols.indexOf(field.key);
+          if (index !== -1) {
+            acc[index] = field
+          }
+          return acc
+        }, [])
       })
     },
   },
@@ -64,7 +69,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      paginate: 'controllersInfo/paginate'
+      paginate: 'controllersInfo/paginate',
+      create: 'controllersInfo/create',
     }),
     pagination(scale = 0) {
       const {currentPage} = this.controllerData
@@ -72,7 +78,7 @@ export default {
         controllerName: this.controllerName,
         perPage: currentPage + scale,
       });
-    }
+    },
   }
 }
 </script>
