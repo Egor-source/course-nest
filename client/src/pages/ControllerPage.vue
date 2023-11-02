@@ -8,7 +8,7 @@
     />
     <ControllerFooter
       :selected-row="selectedRow"
-      @object-deleted="selectedRow = null"
+      @clearSelectedRow="selectedRow = null"
     />
   </div>
 </template>

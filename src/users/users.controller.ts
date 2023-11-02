@@ -14,7 +14,7 @@ import {
 import {AuthGuard} from '@nestjs/passport';
 import {UsersService} from './users.service';
 import {CreateUserDto, CreateUserSchema} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
+import {UpdateUserDto, UpdateUserDtoRequest} from './dto/update-user.dto';
 import {AuthService} from "../auth/auth.service";
 import {JwtService} from "@nestjs/jwt";
 import {TokenDto} from "./dto/token.dto";
@@ -104,7 +104,7 @@ export class UsersController {
     @UseGuards(new UserGuard('id'))
     @UseGuards(AuthGuard('jwt'))
     @Patch(':id')
-    async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<ResponseUser> {
+    async update(@Param('id') id: string, @Body() data: UpdateUserDtoRequest): Promise<ResponseUser> {
         if (data.roles) {
             delete data.roles;
         }

@@ -26,10 +26,29 @@ export async function create({getters, commit}, {controllerName, createData}) {
 
 export async function deleteObject({getters, commit}, {controllerName, object}) {
   const controllerInfo = getters.getControllerInfoByName(controllerName);
-  const path = Object.entries(controllerInfo.methods.delete.options.params).reduce((acc, [key, objectKey]) => {
-    acc = acc.replace(key, object.find((field) => field.key === objectKey).value)
-    return acc
-  }, controllerInfo.methods.delete.path);
+  const path = replacePathParams(controllerInfo.methods.delete.options.params, object, controllerInfo.methods.delete.path)
   const {data} = await axiosInstance.delete(path);
   commit('deleteObjectFromData', {controllerName, data})
+}
+
+export async function update({getters, commit}, {controllerName, object, updateData}) {
+  updateData = Object.entries(updateData).reduce((acc, [key, value]) => {
+    const field = object.find((field) => field.key === key)
+    if (field.value !== value) {
+      acc[key] = value
+    }
+    return acc
+  }, {})
+  if (Object.keys(updateData).length === 0) return null
+  const controllerInfo = getters.getControllerInfoByName(controllerName);
+  const path = replacePathParams(controllerInfo.methods.update.options.params, object, controllerInfo.methods.update.path)
+  const {data} = await axiosInstance.patch(path, updateData);
+  commit('updateObject', {controllerName, data})
+}
+
+function replacePathParams(params, object, path) {
+  return Object.entries(params).reduce((acc, [key, objectKey]) => {
+    acc = acc.replace(key, object.find((field) => field.key === objectKey).value)
+    return acc
+  }, path);
 }

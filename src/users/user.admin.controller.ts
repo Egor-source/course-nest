@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import {UsersService} from './users.service';
 import {CreateUserDto, CreateUserSchema} from './dto/create-user.dto';
-import {UpdateUserDto} from './dto/update-user.dto';
+import {UpdateUserDto, UpdateUserDtoRequest} from './dto/update-user.dto';
 import {AuthService} from "../auth/auth.service";
 import {ValidationPipe} from "../pipes/ValidationPipe";
 import {ApiBody, ApiResponse} from "@nestjs/swagger";
@@ -136,7 +136,7 @@ export class UsersAdminController {
             },
         }
     })
-    async update(@Param('id') id: string, @Body() data: UpdateUserDto): Promise<ResponseUserFull> {
+    async update(@Param('id') id: string, @Body() data: UpdateUserDtoRequest): Promise<ResponseUserFull> {
         return await this.usersService.update(+id, data);
     }
 

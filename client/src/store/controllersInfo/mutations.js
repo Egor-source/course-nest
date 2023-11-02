@@ -24,6 +24,14 @@ export function deleteObjectFromData(store, {controllerName, data}) {
   })
 }
 
+export function updateObject(store, {controllerName, data}) {
+  const controllerData = store.controllersData[controllerName].data
+  const updateObject = controllerData.find((object) => object.id === data.id)
+  Object.entries(data).forEach(([key, value]) => {
+    updateObject[key] = value
+  })
+}
+
 export function updateControllerData(store, {name, ...data}) {
   store.controllersData[name] = data
 }
