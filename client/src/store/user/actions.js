@@ -2,7 +2,6 @@ import axiosInstance from '@/axios'
 
 export async function login({commit}, userData) {
   const {data} = await axiosInstance.post('users/login', userData)
-  console.log(data)
   localStorage.setItem('accessToken', data.access_token)
   localStorage.setItem('refreshToken', data.refresh_token)
 

@@ -2,10 +2,7 @@ import {
     Body,
     Param,
     UsePipes,
-    UseGuards,
-    Request, SetMetadata,
 } from '@nestjs/common';
-import {AuthGuard} from '@nestjs/passport';
 import {UsersService} from './users.service';
 import {CreateUserDto, CreateUserSchema} from './dto/create-user.dto';
 import {UpdateUserDto} from './dto/update-user.dto';

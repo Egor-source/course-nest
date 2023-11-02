@@ -8,6 +8,7 @@ export abstract class DefaultService<T> {
     }
 
    public async paginate(paginate: PaginateInfoDto) {
+       console.log(paginate)
         const [data, total] = await this.repository.findAndCount({
             take: paginate.count,
             skip: paginate.perPage * paginate.count,

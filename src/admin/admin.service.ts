@@ -62,7 +62,7 @@ export class AdminService {
                     const options = this.reflector.get('options', controllerRef[name])
                     if (methodType) {
                         acc[methodType] = {
-                            path: `${process.env.GLOBAL_PREFIX}/${prefix}/${path ?? ''}`,
+                            path: `/${prefix}/${path ?? ''}`,
                             options,
                         }
                     }
