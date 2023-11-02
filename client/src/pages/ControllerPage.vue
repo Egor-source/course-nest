@@ -20,13 +20,17 @@ export default {
   components: {ControllerPagination, ControllerTable},
   computed: {
     ...mapGetters({
-      getControllerDataByName: 'controllersInfo/getControllerDataByName'
+      getControllerDataByName: 'controllersInfo/getControllerDataByName',
+      getControllerInfoByName: 'controllersInfo/getControllerInfoByName'
     }),
     controllerName() {
       return this.$route.params.controllerName
     },
     controllerData() {
       return this.getControllerDataByName(this.controllerName)
+    },
+    controllerInfo() {
+      return this.getControllerInfoByName(this.controllerName)
     },
     cols() {
       if (!this.controllerData || !this.controllerData.data.length > 0) return []
@@ -35,10 +39,18 @@ export default {
     rows() {
       if (!this.controllerData) return []
       return this.controllerData.data.map((object) => {
-        return Object.entries(object).map(([key, value]) => ({
-          key,
-          value
-        }))
+        return Object.entries(object).map(([key, value]) => {
+          const relationInfo = this.controllerInfo.options?.relationFields?.find(({fieldName}) => fieldName === key)
+          const fieldData = {
+            key,
+            value,
+            fieldType: relationInfo ? 'relation' : 'simple',
+          }
+          if (relationInfo) {
+            fieldData.relationInfo = relationInfo
+          }
+          return fieldData
+        })
       })
     },
   },
