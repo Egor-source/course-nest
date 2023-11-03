@@ -81,11 +81,12 @@ export default {
       paginate: 'controllersInfo/paginate',
       create: 'controllersInfo/create',
     }),
-    pagination(scale = 0) {
+    pagination() {
+      this.selectedRow = null;
       const {currentPage} = this.controllerData
       this.paginate({
         controllerName: this.controllerName,
-        perPage: currentPage + scale,
+        perPage: currentPage,
       });
     },
   }
