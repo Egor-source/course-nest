@@ -26,6 +26,13 @@ export class RolesService extends DefaultService<Role> {
         return role;
     }
 
+    async findAll(where: [] | object) {
+        const roles = await this.repository.find({
+            where
+        });
+        return roles
+    }
+
     async findByName(name: string) {
         const role = await this.repository.findOneBy({
             name,

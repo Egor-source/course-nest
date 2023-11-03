@@ -1,12 +1,13 @@
 import {Injectable} from '@nestjs/common';
 import {CreateUserDto} from './dto/create-user.dto';
-import { UpdateUserDtoRequest} from './dto/update-user.dto';
+import {UpdateUserDtoRequest} from './dto/update-user.dto';
 import {InjectRepository} from "@nestjs/typeorm";
 import {User} from "./entities/user.entity";
 import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt'
 import {RolesService} from "../roles/roles.service";
 import {DefaultService} from "../global/DefaultService";
+import {Role} from "../roles/entities/role.entity";
 
 @Injectable()
 export class UsersService extends DefaultService<User> {
@@ -19,11 +20,19 @@ export class UsersService extends DefaultService<User> {
     }
 
     async create(data: CreateUserDto) {
-        const role = await this.roleService.findByName('user');
+        let roles: Role[];
+        if (data.roles) {
+            const where = data.roles.map((id) => ({id}))
+            roles = await this.roleService.findAll(where);
+        } else {
+            const role = await this.roleService.findByName('user');
+            roles = [role]
+        }
+
         const newUser = await this.repository.save({
             login: data.login,
             password: await bcrypt.hash(data.password, 1),
-            roles: [role],
+            roles,
         })
 
         return newUser;

@@ -1,9 +1,9 @@
 import {PartialType} from '@nestjs/mapped-types';
 import {CreateUserDto} from './create-user.dto';
 import {Role} from "../../roles/entities/role.entity";
-import {ApiProperty} from "@nestjs/swagger";
+import {ApiProperty, OmitType} from "@nestjs/swagger";
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
+export class UpdateUserDto extends OmitType(CreateUserDto, ['roles'] as const) {
     @ApiProperty()
     id: string
     @ApiProperty()

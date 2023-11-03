@@ -4,7 +4,7 @@ import {
     UsePipes,
 } from '@nestjs/common';
 import {UsersService} from './users.service';
-import {CreateUserDto, CreateUserSchema} from './dto/create-user.dto';
+import {CreateUserDto, CreateUserAdminSchema} from './dto/create-user.dto';
 import {UpdateUserDto, UpdateUserDtoRequest} from './dto/update-user.dto';
 import {AuthService} from "../auth/auth.service";
 import {ValidationPipe} from "../pipes/ValidationPipe";
@@ -47,7 +47,7 @@ export class UsersAdminController {
         type: ResponseUserFull,
     })
     @ApiBody({type: CreateUserDto})
-    @UsePipes(new ValidationPipe(CreateUserSchema))
+    @UsePipes(new ValidationPipe(CreateUserAdminSchema))
     @AdminCreate({
         path: '/create',
         options: {
@@ -60,6 +60,10 @@ export class UsersAdminController {
                     label: 'Пароль',
                     require: true,
                 },
+                roles:{
+                    label:'Роли',
+                    require: false,
+                }
             }
         }
     })
