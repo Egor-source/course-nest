@@ -23,6 +23,9 @@ export class Post {
     @ApiProperty({
         type:()=>User
     })
-    @ManyToOne(() => User, (user) => user.posts)
+    @ManyToOne(() => User, (user) => user.posts,{
+        onUpdate:'CASCADE',
+        onDelete:'CASCADE',
+    })
     user?: User;
 }

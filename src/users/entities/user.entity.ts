@@ -20,10 +20,7 @@ export class User {
     @ApiProperty({
         type:[Post]
     })
-    @OneToMany(() => Post, (post) => post.user,{
-        onUpdate:'CASCADE',
-        onDelete:'CASCADE',
-    })
+    @OneToMany(() => Post, (post) => post.user)
     posts: Promise<Post[]>;
 
     @ApiProperty({
