@@ -1,7 +1,7 @@
 import {Repository} from "typeorm";
 import {PaginateInfoDto} from "../dto/PaginateInfoDto";
 
-export abstract class DefaultService<T> {
+export abstract class DefaultService<T extends { id: number }> {
     protected constructor(
         protected repository: Repository<T>
     ) {
@@ -11,6 +11,9 @@ export abstract class DefaultService<T> {
         const [data, total] = await this.repository.findAndCount({
             take: paginate.count,
             skip: paginate.perPage * paginate.count,
+            order: {
+                id: "DESC"
+            } as any
         })
         return {
             data,

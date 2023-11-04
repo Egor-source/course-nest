@@ -41,7 +41,7 @@ export default {
     },
     cols() {
       if (!this.controllerData || !this.controllerData.data.length > 0) return []
-      return Object.keys(this.controllerData.data[0])
+      return Object.keys(this.controllerData.data[this.controllerData.data.length - 1])
     },
     rows() {
       if (!this.controllerData) return []
