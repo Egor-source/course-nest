@@ -15,6 +15,7 @@ export function setControllersData(store, controllersInfo) {
 
 export function addObjectToData(store, {controllerName, data}) {
   store.controllersData[controllerName].data.push(data)
+  store.controllersData[controllerName].total += 1
 }
 
 export function deleteObjectFromData(store, {controllerName, data}) {
@@ -22,6 +23,7 @@ export function deleteObjectFromData(store, {controllerName, data}) {
   store.controllersData[controllerName].data = store.controllersData[controllerName].data.filter((object) => {
     return object[key] !== value
   })
+  store.controllersData[controllerName].total -= 1
 }
 
 export function updateObject(store, {controllerName, data}) {

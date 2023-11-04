@@ -3,6 +3,7 @@
     class="py-3 px-4 border-solid flex justify-between border-t-2  border-gray-400"
   >
     <div class="flex gap-2">
+      <div class="text-gray-400 leading-loose">Всего: {{ controllerData.total }}</div>
       <button
         v-if="isMethodExist({controllerName, method:'create'})"
         class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
