@@ -15,7 +15,9 @@ export function setControllersData(store, controllersInfo) {
 
 export function addObjectToData(store, {controllerName, data}) {
   store.controllersData[controllerName].data.unshift(data)
-  store.controllersData[controllerName].data.splice(store.controllersData[controllerName].data.length - 1, 1)
+  if (store.controllersData[controllerName].data.length > +process.env.PAGINATE_COUNT) {
+    store.controllersData[controllerName].data.splice(store.controllersData[controllerName].data.length - 1, 1)
+  }
   store.controllersData[controllerName].total += 1
 }
 
