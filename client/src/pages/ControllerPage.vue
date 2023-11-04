@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col relative overflow-x-auto shadow-md sm:rounded-lg dark:bg-gray-800">
+  <div class="h-full flex flex-col relative overflow-x-auto shadow-md sm:rounded-lg bg-gray-800">
     <ControllerTable
       v-model="selectedRow"
       v-if="cols.length>0"

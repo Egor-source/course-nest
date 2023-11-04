@@ -1,7 +1,7 @@
 <template>
   <div class="flex-1 overflow-y-auto">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="sticky top-0 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+    <table class="w-full text-sm text-left text-gray-400">
+      <thead class="sticky top-0 text-xs  uppercase bg-gray-700 text-gray-400">
       <tr>
         <th
           class="px-6 py-3"
@@ -19,7 +19,7 @@
       <tr
         v-for="row in rows"
         :key="row"
-        class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+        class=" bg-gray-800 border-b border-gray-700  :hover:bg-gray-600"
       >
         <td
           class="px-6 py-4"
@@ -29,7 +29,7 @@
             id="default-radio-1"
             type="radio"
             name="default-radio"
-            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            class="w-4 h-4 text-blue-600  bg-gray-700 border-gray-600"
             @click="checkRadio($event, row)"
           >
         </td>
